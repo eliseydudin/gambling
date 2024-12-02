@@ -5,7 +5,7 @@ import sys
 from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.filters import CommandStart, Filter
+from aiogram.filters import CommandStart, Filter, Command
 from aiogram.types import Message
 
 from dotenv import load_dotenv
@@ -13,7 +13,7 @@ from os import environ
 
 
 class DiceFilter(Filter):
-    def __call__(self, message: Message):
+    async def __call__(self, message: Message):
         return (
             message.dice is not None
             and message.dice.emoji == "🎰"
@@ -51,6 +51,14 @@ async def echo_handler(message: Message) -> None:
     #     await message.answer(
     #         f"баланс @{message.from_user.username or "сили"}: {balance[1]}$"
     #     )
+
+
+@dp.message(Command("balance"))
+async def balance(message: Message):
+    balance = scores.get(message.from_user.id, ("", 0))
+    await message.answer(
+        f"баланс @{message.from_user.username or "сили"}: {balance[1]}$"
+    )
 
 
 async def main() -> None:
