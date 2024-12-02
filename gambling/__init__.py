@@ -10,7 +10,7 @@ from aiogram.enums import ParseMode
 from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 
-from gambling.router import DISPATCHER
+from router import DISPATCHER
 
 
 scores: dict[int, tuple[str, int]] = {}

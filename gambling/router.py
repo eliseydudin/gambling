@@ -3,7 +3,8 @@ from aiogram import Dispatcher, html
 from aiogram.filters import CommandStart, Filter, Command
 from aiogram.types import Message
 
-from gambling.db import DATABASE
+from db import DATABASE
+from random import choices, randint
 
 DISPATCHER = Dispatcher()
 
@@ -27,15 +28,26 @@ async def echo_handler(message: Message) -> None:
     id = message.from_user.id
     user = message.from_user.username
     value = (message.dice.value - 33) * 100
+    value += randint(-10, 10) * 100
+
+    modifier = choices([1, 2, 3, 5, 10, 100], [500, 30, 20, 10, 5, 1])[0]
+
+    modmessage = ""
+    if modifier != 1:
+        modmessage = f"модификатор: {modifier}🔥"
+        value *= modifier
+    elif modifier == 10 and value == 0:
+        value = 999999
+        modmessage = "НЕВЕРОЯТНЫЙ КУШ ‼️‼️‼️‼️ +ГАЗИЛЛИОН ДОЛЛАРОВ"
 
     if id in DATABASE:
-        DATABASE.set_score(id, value)
+        DATABASE.set_score(id, DATABASE.get_score(id) + value)
     else:
         DATABASE.create_user(id, user)
         DATABASE.set_score(id, value)
 
     await message.answer(
-        f"поздравляю! @{message.from_user.username or "сили"} выиграл {value}$!!!! 🤑🤑🤑"
+        f"поздравляю! @{message.from_user.username or "сили"} выиграл {value}$!!!! 🤑🤑🤑\n{modmessage}"
     )
 
     # elif message.text and message.text.lower().find("баланс") != -1:
@@ -49,5 +61,15 @@ async def echo_handler(message: Message) -> None:
 async def balance(message: Message):
     balance = DATABASE.get_score(message.from_user.id)
     await message.answer(
-        f"баланс @{message.from_user.username or "сили"}: {balance[1]}$"
+        f"баланс @{message.from_user.username or "сили"}: {balance or 0}$"
     )
+
+
+@DISPATCHER.message(Command("top"))
+async def top(message: Message):
+    t = DATABASE.get_top_five()
+    to_send = "топ игроков 🔥:\n"
+    for i, topster in enumerate(t):
+        to_send += f"{i + 1}. @{topster[0] or "сили"} {topster[1]}$\n"
+
+    await message.answer(to_send)
