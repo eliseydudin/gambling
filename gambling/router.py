@@ -77,3 +77,13 @@ async def top(message: Message):
         to_send += f"{i + 1}. @{topster[0] or "сили"} {topster[1]}$\n"
 
     await message.answer(to_send)
+
+
+@DISPATCHER.message(Command("bottom"))
+async def bottom(message: Message):
+    t = DATABASE.get_bottom_five()
+    to_send = "(анти)топ игроков 🔥:\n"
+    for i, topster in enumerate(t):
+        to_send += f"{i + 1}. @{topster[0] or "сили"} {topster[1]}$\n"
+
+    await message.answer(to_send)

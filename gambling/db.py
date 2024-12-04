@@ -31,6 +31,11 @@ CREATE TABLE IF NOT EXISTS users (
         args = self.cursor.fetchall()
         return args
 
+    def get_bottom_five(self) -> list[tuple[str, int]]:
+        self.cursor.execute("SELECT username, score FROM users ORDER BY score LIMIT 10")
+        args = self.cursor.fetchall()
+        return args
+
     def set_score(self, id: int, value: int) -> None:
         self.cursor.execute(
             "UPDATE users SET score=?1 WHERE telegram_id=?2", (value, id)
