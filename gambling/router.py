@@ -21,6 +21,7 @@ class DiceFilter(Filter):
 @DISPATCHER.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
     await message.answer(f"мяу :3 {html.bold(message.from_user.full_name)}!")
+    await message.reply_dice("🎰")
 
 
 @DISPATCHER.message(DiceFilter())
