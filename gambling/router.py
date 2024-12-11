@@ -32,9 +32,6 @@ async def echo_handler(message: Message) -> None:
     value += randint(-10, 10) * 100
 
     modifier = choices([1, 2, 3, 5, 10, 100], [100, 30, 20, 10, 5, 1])[0]
-    if user == "eliseydudin":
-        modifier = choices([1, 2, 3, 5, 10, 100], [20, 10, 5, 1, 6, 10])[0]
-        value = abs(value)
 
     modmessage = ""
     if modifier != 1:
